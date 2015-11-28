@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using MiscUtils;
 using DWORD = System.UInt64;
 using HANDLE = System.IntPtr;
 using i64 = System.Int64;
@@ -213,7 +214,8 @@ static int sqlite3_os_type = 0;
       //  sqlite3_os_type = sInfo.dwPlatformId == VER_PLATFORM_WIN32_NT ? 2 : 1;
       //}
       //return sqlite3_os_type == 2;
-      return Environment.OSVersion.Platform >= PlatformID.Win32NT;
+
+        return true; //Environment.OSVersion.Platform >= PlatformID.Win32NT;
     }
 #endif // * SQLITE_OS_WINCE */
 
@@ -466,7 +468,6 @@ static int winLogErrorAtLine(
       "os_win.c:%d: (%d) %s(%s) - %s",
       iLine, iErrno, zFunc, zPath, zMsg
   );
-
   return errcode;
 }
 
@@ -2557,8 +2558,10 @@ int isTemp = 0;
 
       // /* Convert the filename to the system encoding. */
       zConverted = zUtf8Name;// convertUtf8Filename( zUtf8Name );
+        /* Commented cause: on unix corrupts full path
       if ( zConverted.StartsWith( "/" ) && !zConverted.StartsWith( "//" ) )
         zConverted = zConverted.Substring( 1 );
+        */
       //if ( String.IsNullOrEmpty( zConverted ) )
       //{
       //  return SQLITE_NOMEM;
@@ -2643,7 +2646,14 @@ dwFlagsAndAttributes |= FileOptions.RandomAccess; // FILE_FLAG_RANDOM_ACCESS;
 #if WINDOWS_PHONE || SQLITE_SILVERLIGHT  
  fs = new IsolatedStorageFileStream(zConverted, dwCreationDisposition, dwDesiredAccess, dwShareMode, IsolatedStorageFile.GetUserStoreForApplication());
 #elif !(SQLITE_SILVERLIGHT || WINDOWS_MOBILE)
-            fs = new FileStream( zConverted, dwCreationDisposition, dwDesiredAccess, dwShareMode, 4096, dwFlagsAndAttributes );
+            fs = new FileStream( 
+                zConverted, 
+                dwCreationDisposition, 
+                dwDesiredAccess, 
+                dwShareMode, 
+                4096, 
+                dwFlagsAndAttributes 
+            );
 #else
             fs = new FileStream( zConverted, dwCreationDisposition, dwDesiredAccess, dwShareMode, 4096);
 #endif
@@ -2697,6 +2707,7 @@ pFile.lastErrno = 1;
 #endif
       winLogError(SQLITE_CANTOPEN, "winOpen", zUtf8Name);
         //        free(zConverted);
+          
         if ( isReadWrite )
         {
           return winOpen( pVfs, zName, pFile,
@@ -3539,10 +3550,12 @@ Debug.Assert(winSysInfo.dwAllocationGranularity > 0);
     private class LockingStrategy
     {
 #if !(SQLITE_SILVERLIGHT || WINDOWS_MOBILE)
+        /*
       [DllImport( "kernel32.dll" )]
       static extern bool LockFileEx( IntPtr hFile, uint dwFlags, uint dwReserved,
       uint nNumberOfBytesToLockLow, uint nNumberOfBytesToLockHigh,
       [In] ref System.Threading.NativeOverlapped lpOverlapped );
+         */
 
       const int LOCKFILE_FAIL_IMMEDIATELY = 1;
 #endif
@@ -3562,8 +3575,8 @@ Debug.Assert(winSysInfo.dwAllocationGranularity > 0);
         ovlp.OffsetLow = (int)offset;
         ovlp.OffsetHigh = 0;
         ovlp.EventHandle = IntPtr.Zero;
-
-        return LockFileEx( pFile.fs.Handle, LOCKFILE_FAIL_IMMEDIATELY, 0, (uint)length, 0, ref ovlp ) ? 1 : 0;
+          pFile.fs.Lock(offset,length);
+          return 1; //LockFileEx( pFile.fs.Handle, LOCKFILE_FAIL_IMMEDIATELY, 0, (uint)length, 0, ref ovlp ) ? 1 : 0;
 #else
             return 1;
 #endif
@@ -3592,7 +3605,7 @@ Debug.Assert(winSysInfo.dwAllocationGranularity > 0);
         {
           pFile.fs.Lock( offset + pFile.sharedLockByte, 1 );
         }
-        catch ( IOException )
+        catch ( IOException e)
         {
           return 0;
         }

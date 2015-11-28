@@ -325,7 +325,9 @@ new sqlite3_mutex( SQLITE_W32_MUTEX_INITIALIZER, 0, 0, (DWORD)0
     static void winMutexEnter( sqlite3_mutex p )
     {
       DWORD tid = GetCurrentThreadId();
+        #if SQLITE_DEBUG
       Debug.Assert( p.id == SQLITE_MUTEX_RECURSIVE || winMutexNotheld2( p, tid ) );
+        #endif
       EnterCriticalSection( p.mutex );
       p.owner = tid;
       p.nRef++;
@@ -343,7 +345,9 @@ new sqlite3_mutex( SQLITE_W32_MUTEX_INITIALIZER, 0, 0, (DWORD)0
       DWORD tid = GetCurrentThreadId();
 #endif
       int rc = SQLITE_BUSY;
+        #if SQLITE_DEBUG
       Debug.Assert( p.id == SQLITE_MUTEX_RECURSIVE || winMutexNotheld2( p, tid ) );
+#endif
       /*
       ** The sqlite3_mutex_try() routine is very rarely used, and when it
       ** is used it is merely an optimization.  So it is OK for it to always
@@ -385,7 +389,9 @@ rc = SQLITE_OK;
       DWORD tid = GetCurrentThreadId();
 #endif
       Debug.Assert( p.nRef > 0 );
+        #if SQLITE_DEBUG
       Debug.Assert( p.owner == tid );
+#endif
       p.nRef--;
       Debug.Assert( p.nRef == 0 || p.id == SQLITE_MUTEX_RECURSIVE );
       if (p.nRef == 0) LeaveCriticalSection( p.mutex );
@@ -396,7 +402,6 @@ rc = SQLITE_OK;
       }
 #endif
     }
-
     static sqlite3_mutex_methods sqlite3DefaultMutex()
     {
       sqlite3_mutex_methods sMutex = new sqlite3_mutex_methods (

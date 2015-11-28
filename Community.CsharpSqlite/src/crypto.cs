@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
-
+using System.Text.RegularExpressions;
+using MiscUtils;
 using u8 = System.Byte;
 using u16 = System.UInt16;
 using Pgno = System.UInt32;
@@ -87,8 +89,16 @@ static void CODEC_TRACE( string T, params object[] ap ) { if ( sqlite3PagerTrace
       public int key_sz;
       public byte[] iv;
       public int iv_sz;
-      public ICryptoTransform encryptor;
-      public ICryptoTransform decryptor;
+
+        public ICryptoTransform encryptor
+        {
+            get { return Aes.CreateEncryptor(key, iv); }
+        }
+
+        public ICryptoTransform decryptor
+        {
+            get { return Aes.CreateDecryptor(key, iv); }
+        }
 
       public cipher_ctx Copy()
       {
@@ -108,8 +118,6 @@ static void CODEC_TRACE( string T, params object[] ap ) { if ( sqlite3PagerTrace
           iv.CopyTo( c.iv, 0 );
         }
         c.iv_sz = iv_sz;
-        c.encryptor = encryptor;
-        c.decryptor = decryptor;
         return c;
       }
 
@@ -130,8 +138,6 @@ static void CODEC_TRACE( string T, params object[] ap ) { if ( sqlite3PagerTrace
           iv.CopyTo( ct.iv, 0 );
         }
         ct.iv_sz = iv_sz;
-        ct.encryptor = encryptor;
-        ct.decryptor = decryptor;
       }
     }
 
@@ -365,8 +371,10 @@ static void CODEC_TRACE( string T, params object[] ap ) { if ( sqlite3PagerTrace
         Aes.KeySize = 0x100;
         Aes.Mode = CipherMode.CBC;
 #endif
+          /*
         c_ctx.encryptor = Aes.CreateEncryptor( c_ctx.key, c_ctx.iv );
         c_ctx.decryptor = Aes.CreateDecryptor( c_ctx.key, c_ctx.iv );
+           */
         return SQLITE_OK;
       };
       return SQLITE_ERROR;
@@ -380,42 +388,75 @@ static void CODEC_TRACE( string T, params object[] ap ) { if ( sqlite3PagerTrace
     * in - pointer to input bytes
     * out - pouter to output bytes
     */
-    static int codec_cipher( cipher_ctx ctx, Pgno pgno, int mode, int size, byte[] bIn, byte[] bOut )
-    {
-      int iv;
-      int tmp_csz, csz;
-
-      CODEC_TRACE( "codec_cipher:entered pgno=%d, mode=%d, size=%d\n", pgno, mode, size );
-
-      /* just copy raw data from in to out when key size is 0
-      * i.e. during a rekey of a plaintext database */
-      if ( ctx.key_sz == 0 )
-      {
-        Array.Copy( bIn, bOut, bIn.Length );//memcpy(out, in, size);
+    static int codec_cipher( cipher_ctx ctx, int mode, int size, byte[] bIn, byte[] bOut )
+     {
+         if(bIn == null || bOut == null)
+             throw new ArgumentNullException();
+         if(bIn == bOut)
+             throw new ArgumentException("bin == bout");
+         if(bIn.Length != bOut.Length)
+             throw new ArgumentException("Length aren't equal");
+         int iv;
+        int tmp_csz, csz;
+        //CODEC_TRACE("codec_cipher:entered pgno=%d, mode=%d, size=%d\n", pgno, mode, size);
+        
+        /* just copy raw data from in to out when key size is 0
+        * i.e. during a rekey of a plaintext database */
+        if (ctx.key_sz == 0)
+        {
+            Array.Copy(bIn, bOut, bIn.Length); //memcpy(out, in, size);
+            return SQLITE_OK;
+        }
+         if (mode == CIPHER_ENCRYPT)
+         {
+             using (var msEncrypt = new MemoryStream(bIn.Length))
+             {
+                 using
+                (
+                var csEncrypt = new CryptoStream(
+                    msEncrypt,
+                    ctx.encryptor,
+                    CryptoStreamMode.Write
+                    )
+                )
+                 {
+                     csEncrypt.Write(bIn, 0, bIn.Length);
+                 }
+                 var msData = msEncrypt.ToArray();
+                 Array.Copy(msData, bOut, msData.Length);
+             }
+         }
+         else
+         {
+             using (var inputMs = new MemoryStream(bIn))
+             {
+                 using (var outputMs = new MemoryStream(bOut))
+                 {
+                     var buffer = new byte[4096];
+                     using (
+                            var csDecrypt = new CryptoStream(
+                                inputMs,
+                                ctx.decryptor,
+                                CryptoStreamMode.Read
+                            )
+                        )
+                     {
+                         var read = csDecrypt.Read(buffer, 0, buffer.Length);
+                         while (read > 0)
+                         {
+                             outputMs.Write(buffer, 0, read);
+                             read = csDecrypt.Read(buffer, 0, buffer.Length);
+                         }
+                     }
+                     var outputMsData = outputMs.ToArray();
+                     if(outputMsData.Length != bOut.Length)
+                         throw new ArgumentException("Length");
+                     Array.Copy(outputMsData, bOut, outputMsData.Length);
+                 }
+             }
+         }
+         
         return SQLITE_OK;
-      }
-
-      MemoryStream dataStream = new MemoryStream();
-      CryptoStream encryptionStream;
-      if ( mode == CIPHER_ENCRYPT )
-      {
-        encryptionStream = new CryptoStream( dataStream, ctx.encryptor, CryptoStreamMode.Write );
-      }
-      else
-      {
-        encryptionStream = new CryptoStream( dataStream, ctx.decryptor, CryptoStreamMode.Write );
-      }
-      encryptionStream.Write( bIn, 0, size );
-      encryptionStream.FlushFinalBlock();
-      dataStream.Position = 0;
-
-      dataStream.Read( bOut, 0, (int)dataStream.Length );
-      encryptionStream.Close();
-      dataStream.Close();
-
-
-
-      return SQLITE_OK;
     }
 
     /**
@@ -475,59 +516,72 @@ static void CODEC_TRACE( string T, params object[] ap ) { if ( sqlite3PagerTrace
     */
     static byte[] sqlite3Codec( codec_ctx iCtx, byte[] data, Pgno pgno, int mode )
     {
-      codec_ctx ctx = (codec_ctx)iCtx;
-      int pg_sz = sqlite3BtreeGetPageSize( ctx.pBt );
-      int offset = 0;
-      byte[] pData = data;
+        codec_ctx ctx = (codec_ctx) iCtx;
+        int pg_sz = sqlite3BtreeGetPageSize(ctx.pBt);
+        int offset = 0;
+        byte[] pData = data;
 
-      CODEC_TRACE( "sqlite3Codec: entered pgno=%d, mode=%d, ctx.mode_rekey=%d, pg_sz=%d\n", pgno, mode, ctx.mode_rekey, pg_sz );
+        CODEC_TRACE("sqlite3Codec: entered pgno=%d, mode=%d, ctx.mode_rekey=%d, pg_sz=%d\n", pgno, mode,
+            ctx.mode_rekey, pg_sz);
 
-      /* derive key on first use if necessary */
-      if ( ctx.read_ctx.derive_key )
-      {
-        codec_key_derive( ctx, ctx.read_ctx );
-        ctx.read_ctx.derive_key = false;
-      }
-
-      if ( ctx.write_ctx.derive_key )
-      {
-        if ( cipher_ctx_cmp( ctx.write_ctx, ctx.read_ctx ) == 0 )
+        /* derive key on first use if necessary */
+        if (ctx.read_ctx.derive_key)
         {
-          cipher_ctx_copy( ctx.write_ctx, ctx.read_ctx ); // the relevant parameters are the same, just copy read key
+            codec_key_derive(ctx, ctx.read_ctx);
+            ctx.read_ctx.derive_key = false;
         }
-        else
+
+        if (ctx.write_ctx.derive_key)
         {
-          codec_key_derive( ctx, ctx.write_ctx );
-          ctx.write_ctx.derive_key = false;
+            if (cipher_ctx_cmp(ctx.write_ctx, ctx.read_ctx) == 0)
+            {
+                cipher_ctx_copy(ctx.write_ctx, ctx.read_ctx);
+                    // the relevant parameters are the same, just copy read key
+            }
+            else
+            {
+                codec_key_derive(ctx, ctx.write_ctx);
+                ctx.write_ctx.derive_key = false;
+            }
         }
-      }
-
-
-
-      CODEC_TRACE( "sqlite3Codec: switch mode=%d offset=%d\n", mode, offset );
-      if ( ctx.buffer.Length != pg_sz )
-        ctx.buffer = sqlite3MemMalloc( pg_sz );
-      switch ( mode )
-      {
-        case SQLITE_DECRYPT:
-          codec_cipher( ctx.read_ctx, pgno, CIPHER_DECRYPT, pg_sz, pData, ctx.buffer );
-          if ( pgno == 1 )
-            Buffer.BlockCopy( Encoding.UTF8.GetBytes( SQLITE_FILE_HEADER ), 0, ctx.buffer, 0, FILE_HEADER_SZ );// memcpy( ctx.buffer, SQLITE_FILE_HEADER, FILE_HEADER_SZ ); /* copy file header to the first 16 bytes of the page */
-          Buffer.BlockCopy( ctx.buffer, 0, pData, 0, pg_sz ); //memcpy( pData, ctx.buffer, pg_sz ); /* copy buffer data back to pData and return */
-          return pData;
-        case SQLITE_ENCRYPT_WRITE_CTX: /* encrypt */
-          if ( pgno == 1 )
-            Buffer.BlockCopy( ctx.write_ctx.iv, 0, ctx.buffer, 0, FILE_HEADER_SZ );//memcpy( ctx.buffer, ctx.iv, FILE_HEADER_SZ ); /* copy salt to output buffer */
-          codec_cipher( ctx.write_ctx, pgno, CIPHER_ENCRYPT, pg_sz, pData, ctx.buffer );
-          return ctx.buffer; /* return persistent buffer data, pData remains intact */
-        case SQLITE_ENCRYPT_READ_CTX:
-          if ( pgno == 1 )
-            Buffer.BlockCopy( ctx.read_ctx.iv, 0, ctx.buffer, 0, FILE_HEADER_SZ );//memcpy( ctx.buffer, ctx.iv, FILE_HEADER_SZ ); /* copy salt to output buffer */
-          codec_cipher( ctx.read_ctx, pgno, CIPHER_ENCRYPT, pg_sz, pData, ctx.buffer );
-          return ctx.buffer; /* return persistent buffer data, pData remains intact */
-        default:
-          return pData;
-      }
+        CODEC_TRACE("sqlite3Codec: switch mode=%d offset=%d\n", mode, offset);
+        if (ctx.buffer.Length != pg_sz)
+            ctx.buffer = sqlite3MemMalloc(pg_sz);
+        byte[] result;
+        switch (mode)
+        {
+            case SQLITE_DECRYPT:
+                codec_cipher(ctx.read_ctx, CIPHER_DECRYPT, pg_sz, pData, ctx.buffer);
+                if (pgno == 1)
+                    Buffer.BlockCopy(
+                        Encoding.UTF8.GetBytes(SQLITE_FILE_HEADER), 
+                        0, 
+                        ctx.buffer, 
+                        0, 
+                        FILE_HEADER_SZ
+                    );
+                Buffer.BlockCopy(ctx.buffer, 0, pData, 0, pg_sz);
+                result = pData;
+                break;
+            case SQLITE_ENCRYPT_WRITE_CTX:
+            /* encrypt */
+                if (pgno == 1)
+                    Buffer.BlockCopy(ctx.write_ctx.iv, 0, ctx.buffer, 0, FILE_HEADER_SZ);
+                        //memcpy( ctx.buffer, ctx.iv, FILE_HEADER_SZ ); /* copy salt to output buffer */
+                codec_cipher(ctx.write_ctx, CIPHER_ENCRYPT, pg_sz, pData, ctx.buffer);
+                result = ctx.buffer; /* return persistent buffer data, pData remains intact */
+                break;
+            case SQLITE_ENCRYPT_READ_CTX:
+                if (pgno == 1)
+                    Buffer.BlockCopy(ctx.read_ctx.iv, 0, ctx.buffer, 0, FILE_HEADER_SZ);
+                codec_cipher(ctx.read_ctx, CIPHER_ENCRYPT, pg_sz, pData, ctx.buffer);
+                result = ctx.buffer; 
+                break;
+            default:
+                result = pData;
+                break;
+        }
+        return result;
     }
 
 

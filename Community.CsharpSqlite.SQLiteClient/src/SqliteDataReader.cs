@@ -124,7 +124,7 @@ namespace Community.CsharpSqlite.SQLiteClient
 					if (version == 3) {
 						// A decltype might be null if the type is unknown to sqlite.
 						decltypes = new string[pN];
-						declmode = new int[pN]; // 1 == integer, 2 == datetime
+						declmode = new int[pN]; // 1 == integer, 2 == datetime, 3 == guid
 						for (int i = 0; i < pN; i++) {
 							string decl = Sqlite3.sqlite3_column_decltype (pVm, i);
 							if (decl != null) {
@@ -133,6 +133,8 @@ namespace Community.CsharpSqlite.SQLiteClient
 									declmode[i] = 1;
 								else if (decltypes[i] == "date" || decltypes[i] == "datetime")
 									declmode[i] = 2;
+                                else if (decltypes[i] == "guid")
+                                    declmode[i] = 3;
 							}
 						}
 					}
@@ -174,7 +176,7 @@ namespace Community.CsharpSqlite.SQLiteClient
 								// Or if it was declared a date or datetime, do the reverse of what we
 								// do for DateTime parameters.
 								else if (declmode[i] == 2)
-									data_row[i] = DateTime.FromFileTime(val);								
+									data_row[i] = DateTime.FromFileTime(val);		
 								else
 									data_row[i] = val;
 									
@@ -190,13 +192,15 @@ namespace Community.CsharpSqlite.SQLiteClient
 								if (declmode[i] == 2)
 									if (data_row[i] == null) data_row[i] = null;
 									else data_row[i] = DateTime.Parse((string)data_row[i], System.Globalization.CultureInfo.InvariantCulture);
+                                else if (declmode[i] == 3)
+                                    data_row[i] = Guid.Parse((string) data_row[i]);
 								break;
 							case 4:
 								int blobbytes = Sqlite3.sqlite3_column_bytes16 (pVm, i);
 								byte[] blob = Sqlite3.sqlite3_column_blob(pVm, i);
 								//byte[] blob = new byte[blobbytes];
 								//Marshal.Copy (blobptr, blob, 0, blobbytes);
-								data_row[i] = blob;
+								data_row[i] = blob ?? new byte[0];
 								break;
 							case 5:
 								data_row[i] = null;

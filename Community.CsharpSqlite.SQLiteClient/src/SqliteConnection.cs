@@ -244,14 +244,13 @@ namespace Community.CsharpSqlite.SQLiteClient
 				break;
 			}
 				}
-				
+			    
 				if (db_file == null) {
 					throw new InvalidOperationException ("Invalid connection string: no URI");
 				}
 			}
 		}		
 #endregion
-
 #region Internal Methods
 		
 		internal void StartExec ()
