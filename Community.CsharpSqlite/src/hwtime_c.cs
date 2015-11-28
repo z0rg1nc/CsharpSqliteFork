@@ -1,4 +1,4 @@
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite_u3264 = System.UInt64;
 

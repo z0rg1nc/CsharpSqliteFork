@@ -1,15 +1,12 @@
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-
 using u8 = System.Byte;
 
 
 using YYCODETYPE = System.Int32;
 using YYACTIONTYPE = System.Int32;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite3ParserTOKENTYPE = Sqlite3.Token;
 

@@ -33,7 +33,7 @@ using System.Data;
 using System.Data.Common;
 using System.Text;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	public sealed class SqliteCommandBuilder : DbCommandBuilder
 	{

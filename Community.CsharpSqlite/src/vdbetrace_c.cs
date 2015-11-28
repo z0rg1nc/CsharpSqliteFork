@@ -1,13 +1,7 @@
-using System;
 using System.Diagnostics;
 using System.Text;
 
-using Bitmask = System.UInt64;
-using u8 = System.Byte;
-using u16 = System.UInt16;
-using u32 = System.UInt32;
-
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

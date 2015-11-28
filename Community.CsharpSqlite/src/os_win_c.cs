@@ -15,7 +15,7 @@ using u8 = System.Byte;
 #if WINDOWS_PHONE || SQLITE_SILVERLIGHT  
 using System.IO.IsolatedStorage;
 #endif
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

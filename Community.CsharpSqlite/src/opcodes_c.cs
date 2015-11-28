@@ -7,7 +7,7 @@
 **
 *************************************************************************
 */
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

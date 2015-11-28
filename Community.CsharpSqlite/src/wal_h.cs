@@ -5,7 +5,7 @@ using Pgno = System.UInt32;
 using Wal = System.Object;
 #endif
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-
 using Bitmask = System.UInt64;
 
 using i16 = System.Int16;
@@ -11,7 +10,7 @@ using u32 = System.UInt32;
 
 using sqlite3_int64 = System.Int64;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite3_value = Sqlite3.Mem;
   public partial class Sqlite3

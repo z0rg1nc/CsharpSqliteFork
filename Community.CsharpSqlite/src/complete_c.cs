@@ -1,6 +1,4 @@
-using System.Diagnostics;
-
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
 
   using u8 = System.Byte;

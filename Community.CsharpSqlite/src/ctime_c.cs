@@ -1,9 +1,8 @@
-namespace Community.CsharpSqlite
-{
-  using sqlite3_value = Sqlite3.Mem;
-  using System;
+using System;
 
-  public partial class Sqlite3
+namespace BtmI2p.Community.CsharpSqlite
+{
+    public partial class Sqlite3
   {
     /*
     ** 2010 February 23

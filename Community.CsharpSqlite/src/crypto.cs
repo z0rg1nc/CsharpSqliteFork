@@ -1,20 +1,13 @@
 using System;
-using System.Diagnostics;
-using System.Linq;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
-using u8 = System.Byte;
 using u16 = System.UInt16;
 using Pgno = System.UInt32;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
-  using sqlite3_int64 = System.Int64;
-  using sqlite3_stmt = Sqlite3.Vdbe;
-  using System.Security.Cryptography;
-  using System.IO;
-
-  public partial class Sqlite3
+    public partial class Sqlite3
   {
     /*
     *************************************************************************

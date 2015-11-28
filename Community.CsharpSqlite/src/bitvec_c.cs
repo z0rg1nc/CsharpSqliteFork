@@ -1,13 +1,10 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-
-using Pgno = System.UInt32;
 using i64 = System.Int64;
 using u32 = System.UInt32;
 using BITVEC_TELEM = System.Byte;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
 
   public partial class Sqlite3

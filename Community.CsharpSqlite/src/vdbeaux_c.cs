@@ -1,7 +1,6 @@
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
-
 using FILE = System.IO.TextWriter;
 using i16 = System.Int16;
 using i32 = System.Int32;
@@ -10,9 +9,6 @@ using u8 = System.Byte;
 using u16 = System.UInt16;
 using u32 = System.UInt32;
 using u64 = System.UInt64;
-
-using Pgno = System.UInt32;
-
 #if !SQLITE_MAX_VARIABLE_NUMBER
 using ynVar = System.Int16;
 #else
@@ -30,14 +26,13 @@ using yDbMask = System.Int64;
 using yDbMask = System.Int32;
 #endif
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using Op = Sqlite3.VdbeOp;
   using sqlite3_stmt = Sqlite3.Vdbe;
   using sqlite3_value = Sqlite3.Mem;
-  using System;
 
-  public partial class Sqlite3
+    public partial class Sqlite3
   {
     /*
     ** 2003 September 6

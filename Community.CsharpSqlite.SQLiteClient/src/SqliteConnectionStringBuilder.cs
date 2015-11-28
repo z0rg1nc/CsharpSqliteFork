@@ -31,12 +31,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Text;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	public sealed class SqliteConnectionStringBuilder : DbConnectionStringBuilder
 	{

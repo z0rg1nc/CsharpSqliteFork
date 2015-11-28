@@ -1,7 +1,6 @@
-using u8 = System.Byte;
 using u32 = System.UInt32;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

@@ -29,10 +29,9 @@
 //
 
 using System;
-using System.Data;
 using System.Data.Common;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	/// <summary>
 	/// Represents the method that will handle the <see cref="SqliteDataAdapter.RowUpdating"/> event 

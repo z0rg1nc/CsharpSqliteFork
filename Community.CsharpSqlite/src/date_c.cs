@@ -1,13 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-
 using time_t = System.Int64;
 using sqlite3_int64 = System.Int64;
 using i64 = System.Int64;
 using u64 = System.UInt64;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite3_value = Sqlite3.Mem;
 

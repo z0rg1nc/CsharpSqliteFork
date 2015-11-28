@@ -32,12 +32,11 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic ;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using Community.CsharpSqlite;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	public class SqliteDataReader : DbDataReader, IDataReader, IDisposable, IDataRecord
 	{

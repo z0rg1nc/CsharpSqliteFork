@@ -9,12 +9,7 @@
 *************************************************************************
 */
 
-using System;
-using System.Security;
-using System.Runtime.InteropServices;
-using System.Text;
-
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	/// <summary>
 	/// Represents the return values for sqlite_exec() and sqlite_step()

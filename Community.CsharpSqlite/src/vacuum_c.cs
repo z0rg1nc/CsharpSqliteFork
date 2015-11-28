@@ -1,12 +1,7 @@
-using System;
 using System.Diagnostics;
-using System.Text;
-
-using Pgno = System.UInt32;
-
 using u32 = System.UInt32;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite3_stmt = Sqlite3.Vdbe;
 

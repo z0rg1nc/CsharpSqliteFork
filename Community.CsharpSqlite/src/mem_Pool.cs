@@ -1,12 +1,6 @@
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
-using sqlite3_int64 = System.Int64;
-using u32 = System.UInt32;
-using System.Text;
-
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

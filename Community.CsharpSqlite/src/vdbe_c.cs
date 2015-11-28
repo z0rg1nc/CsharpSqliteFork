@@ -1,10 +1,7 @@
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
-
 using FILE = System.IO.TextWriter;
-
-using i32 = System.Int32;
 using i64 = System.Int64;
 using sqlite_int64 = System.Int64;
 
@@ -12,10 +9,6 @@ using u8 = System.Byte;
 using u16 = System.UInt16;
 using u32 = System.UInt32;
 using u64 = System.UInt64;
-
-using sqlite3_int64 = System.Int64;
-
-using Pgno = System.UInt32;
 /*
 ** The yDbMask datatype for the bitmask of all attached databases.
 */
@@ -27,13 +20,12 @@ using yDbMask = System.Int64;
 using yDbMask = System.Int32;
 #endif
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite3_value = Sqlite3.Mem;
   using Op = Sqlite3.VdbeOp;
-  using System;
 
-  public partial class Sqlite3
+    public partial class Sqlite3
   {
     /*
     ** 2001 September 15

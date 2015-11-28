@@ -1,16 +1,12 @@
 using System;
 using System.Diagnostics;
-using System.Text;
-
 using i16 = System.Int16;
 using u8 = System.Byte;
 using u16 = System.UInt16;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
-  using sqlite3_value = Sqlite3.Mem;
-
-  public partial class Sqlite3
+    public partial class Sqlite3
   {
     /*
     ** 2005 May 23

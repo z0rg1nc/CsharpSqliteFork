@@ -1,9 +1,4 @@
-using System;
-using System.Diagnostics;
-
-using i64 = System.Int64;
-
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

@@ -1,8 +1,7 @@
 using i64 = System.Int64;
 using u8 = System.Byte;
-using u64 = System.UInt64;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

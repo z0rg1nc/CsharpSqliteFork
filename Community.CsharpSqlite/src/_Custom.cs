@@ -3,22 +3,22 @@
 **  Custom classes used by C#
 *************************************************************************
 */
+
+#if !(SQLITE_SILVERLIGHT || WINDOWS_MOBILE)
+#endif
 using System;
 using System.Diagnostics;
 using System.IO;
-#if !(SQLITE_SILVERLIGHT || WINDOWS_MOBILE)
 using System.Management;
-#endif
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-
 using i64 = System.Int64;
 
 using u32 = System.UInt32;
 using time_t = System.Int64;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using sqlite3_value = Sqlite3.Mem;
 

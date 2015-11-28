@@ -1,6 +1,6 @@
 #define SQLITE_OS_WIN
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

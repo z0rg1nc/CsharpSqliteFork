@@ -34,12 +34,12 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Collections;
-using System.Collections.Generic ;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	public class SqliteParameterCollection : DbParameterCollection
 	{

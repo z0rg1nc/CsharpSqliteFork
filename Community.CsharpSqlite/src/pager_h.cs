@@ -1,6 +1,6 @@
 using Pgno = System.UInt32;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

@@ -1,18 +1,14 @@
 using System;
 using System.Diagnostics;
-using System.Text;
-
 using i64 = System.Int64;
-using u8 = System.Byte;
 using u32 = System.UInt32;
 
 using Pgno = System.UInt32;
 
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
-  using sqlite3_int64 = System.Int64;
-  using DbPage = Sqlite3.PgHdr;
+    using DbPage = Sqlite3.PgHdr;
   public partial class Sqlite3
   {
 /*

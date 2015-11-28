@@ -1,9 +1,9 @@
-using System.Diagnostics;
-using DWORD = System.Int32;
-using System.Threading;
 using System;
+using System.Diagnostics;
+using System.Threading;
+using DWORD = System.Int32;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

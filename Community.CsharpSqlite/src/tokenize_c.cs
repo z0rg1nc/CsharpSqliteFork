@@ -1,8 +1,7 @@
-using System;
 using System.Diagnostics;
 using System.Text;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

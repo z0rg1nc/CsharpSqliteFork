@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
-using HANDLE = System.IntPtr;
 using System.Text;
+using HANDLE = System.IntPtr;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

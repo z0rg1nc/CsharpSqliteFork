@@ -1,15 +1,13 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   using etByte = System.Boolean;
   using i64 = System.Int64;
   using u64 = System.UInt64;
   using LONGDOUBLE_TYPE = System.Double;
-  using sqlite_u3264 = System.UInt64;
   using va_list = System.Object;
 
   public partial class Sqlite3

@@ -1,8 +1,6 @@
-using System;
-using System.Data;
 using System.Data.Common;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
     //This is the base exception of all sqlite exceptions
     public class SqliteException : DbException

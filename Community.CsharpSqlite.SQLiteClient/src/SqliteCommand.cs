@@ -35,13 +35,12 @@
 //
 
 using System;
-using System.Text;
 using System.Data;
 using System.Data.Common;
-using Community.CsharpSqlite;
 using System.Globalization;
+using System.Text;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	public class SqliteCommand : DbCommand, ICloneable
 	{

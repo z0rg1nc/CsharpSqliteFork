@@ -1,7 +1,6 @@
-using System.Diagnostics;
 using va_list = System.Object;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

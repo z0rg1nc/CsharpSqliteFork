@@ -1,7 +1,7 @@
-using u8 = System.Byte;
 using System.Diagnostics;
+using u8 = System.Byte;
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {

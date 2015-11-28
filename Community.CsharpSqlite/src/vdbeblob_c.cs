@@ -1,10 +1,6 @@
-using System.Diagnostics;
-
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
-  using sqlite3_stmt = Sqlite3.Vdbe;
-
-  public partial class Sqlite3
+    public partial class Sqlite3
   {
     /*
     ** 2007 May 1

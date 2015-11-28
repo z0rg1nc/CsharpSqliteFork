@@ -28,13 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Data;
 using System.Data.Common;
-using System.Collections;
-using System.Text;
 
-namespace Community.CsharpSqlite.SQLiteClient
+namespace BtmI2p.Community.CsharpSqlite.SQLiteClient
 {
 	/// <summary>
 	/// Represents a set of data commands and a database connection that are used 

@@ -2,14 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-
 using i16 = System.Int16;
 using u8 = System.Byte;
 using u16 = System.UInt16;
 using u32 = System.UInt32;
-
-using Pgno = System.UInt32;
-
 /*
 ** The yDbMask datatype for the bitmask of all attached databases.
 */
@@ -21,7 +17,7 @@ using yDbMask = System.Int64;
 using yDbMask = System.Int32; 
 #endif
 
-namespace Community.CsharpSqlite
+namespace BtmI2p.Community.CsharpSqlite
 {
   public partial class Sqlite3
   {
