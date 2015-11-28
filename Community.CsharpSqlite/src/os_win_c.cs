@@ -6,7 +6,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using MiscUtils;
 using DWORD = System.UInt64;
 using HANDLE = System.IntPtr;
 using i64 = System.Int64;
